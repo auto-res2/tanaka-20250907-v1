@@ -1,108 +1,69 @@
-"""src/main.py
-Entry-point that is executed via `python -m src.main`.
-Parses the YAML config, instantiates objects via `importlib`, and calls the stub
-training + evaluation routines defined elsewhere in the repository.
-
-Heavy-weight training/eval is *out of scope* – we only perform a **smoke test** that
-runs a couple of iterations to ensure the pipeline is wired correctly.
 """
+main.py (entry-point)
+---------------------
+This is the orchestration layer that glues everything together.  It loads the
+YAML configuration, instantiates a `Trainer` object (imported from `train.py`)
+for each random seed and, after each run, clears the CUDA cache to keep peak
+memory predictable.
+
+Execute via:   python -m src.main
+"""
+
 from __future__ import annotations
 
-import argparse
-import importlib
-import random
+import sys
 from pathlib import Path
-from types import ModuleType
 from typing import Any, Dict
 
-import numpy as np
 import torch
 import yaml
 
-# ----------------------------------------------------------------------------- #
-# --------------------------- Utility helpers ------------------------------ #
-# ----------------------------------------------------------------------------- #
+try:
+    from .train import Trainer
+except ImportError as exc:  # pragma: no cover
+    # Give a slightly nicer error if someone runs the module outside `src`.
+    raise ImportError(
+        "Could not import 'train'.  Please run as a module:  python -m src.main"
+    ) from exc
 
-def _set_seed(seed: int):
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(seed)
-
-
-def _dynamic_import(module_path: str, attr: str):
-    """import `module_path`, then return `getattr(module, attr)`"""
-    module: ModuleType = importlib.import_module(module_path)
-    return getattr(module, attr)
+# -----------------------------------------------------------------------------
+#  Configuration loader
+# -----------------------------------------------------------------------------
 
 
-# ----------------------------------------------------------------------------- #
-# ------------------------------ Main logic --------------------------------- #
-# ----------------------------------------------------------------------------- #
-
-def _run_single_experiment(exp_cfg: Dict[str, Any]):
-    exp_name: str = exp_cfg["experiment"]["name"]
-    seed: int = exp_cfg.get("seed", 0)
-    _set_seed(seed)
-
-    # ---------------- data ---------------- #
-    dm_cfg = exp_cfg["data_module"]
-    DMClass = _dynamic_import(dm_cfg["module"], dm_cfg["class"])
-    data_module = DMClass(**dm_cfg.get("kwargs", {}))
-    train_dl, val_dl, _ = data_module.dataloaders()
-
-    # ---------------- model ---------------- #
-    model_cfg = exp_cfg["model"]
-    ModelClass = _dynamic_import(model_cfg["module"], model_cfg["class"])
-    model = ModelClass(**model_cfg.get("kwargs", {}))
-
-    # ---------------- trainer ---------------- #
-    trainer_cfg = exp_cfg["trainer"]
-    from src.train import run_training
-    model = run_training(
-        model,
-        train_dl,
-        device="cuda" if torch.cuda.is_available() else "cpu",
-        lr=trainer_cfg.get("lr", 3e-4),
-        max_steps=trainer_cfg.get("max_steps", 1),
-        experiment_name=exp_name,
-    )
-
-    # ---------------- evaluation ---------------- #
-    from src.evaluate import evaluate
-
-    evaluate(
-        model,
-        val_dl,
-        device="cuda" if torch.cuda.is_available() else "cpu",
-        experiment_name=exp_name,
-    )
+def _load_config() -> Dict[str, Any]:
+    config_path = Path(__file__).resolve().parents[1] / "config" / "config.yaml"
+    if not config_path.exists():
+        raise FileNotFoundError(
+            f"Configuration file not found at {config_path}.  Did you forget to create it?"
+        )
+    with open(config_path, "r", encoding="utf-8") as fp:
+        cfg: Dict[str, Any] = yaml.safe_load(fp)
+    return cfg
 
 
-# ----------------------------------------------------------------------------- #
+# -----------------------------------------------------------------------------
+#  Main driver
+# -----------------------------------------------------------------------------
 
-def main():
-    parser = argparse.ArgumentParser(description="Run experiments defined in a YAML config file.")
-    parser.add_argument(
-        "--config", default="config/config.yaml", type=str, help="Path to YAML configuration file."
-    )
-    args = parser.parse_args()
 
-    cfg_path = Path(args.config)
-    if not cfg_path.exists():
-        raise FileNotFoundError(cfg_path)
+def run_all_experiments():
+    cfg = _load_config()
 
-    with open(cfg_path) as f:
-        cfg = yaml.safe_load(f)
+    # ---------------- Experiment 1 (HSSD-B) ----------------
+    for seed in cfg["training"]["seeds"]:
+        trainer = Trainer(cfg)
+        trainer.fit(seed)
+        torch.cuda.empty_cache()
 
-    experiments = cfg.get("experiments", [])
-    if not experiments:
-        raise RuntimeError("No experiments found in the config file.")
-
-    for exp in experiments:
-        _run_single_experiment(exp)
+    # Experiments 2 & 3 would follow the same skeleton and can be implemented
+    # later by extending the Evaluate helpers.
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        run_all_experiments()
+    except RuntimeError as err:
+        # Fail hard but with a clean error message – mirrors the original script.
+        print(f"Execution halted: {err}", file=sys.stderr)
+        sys.exit(1)

@@ -1,25 +1,51 @@
-# config/config.yaml – collection of experiments. Add / edit as needed.
-experiments:
-  - experiment:
-      name: exp1_large_scale_benchmark
-    seed: 42
-    trainer:
-      experiment_name: exp1_large_scale_benchmark
-      lr: 3e-4
-      max_steps: 10000  # shortened for quicker smoke test
-      checkpoint_every: 2000
-    model:
-      module: src.train
-      class: FCRD1Step
-      kwargs:
-        hidden_size: 192
-        mixer_depth: 4
-    data_module:
-      module: src.preprocess
-      class: COCODataModule
-      kwargs:
-        root: ./data/coco
-        batch_size: 16
-        num_workers: 8
-    evaluation:
-      metrics: [FID, IS, CLIP, HFE]
+hardware:
+  gpus: 8
+  gpu_type: A100-80GB
+  cuda_version: "12.2"
+datasets:
+  imagenet_1k:
+    url: https://image-net.org/(requires_manual_download)
+    path: data/imagenet_1k
+    license_notice: Requires registration on ImageNet website.  Please download manually and place under path.
+  laion_aesthetics:
+    url: https://dagshub.com/DagsHub-Datasets/LAION-Aesthetics-V2-6.5plus
+    path: data/laion_aesthetics
+  imagenet_a:
+    url: https://storage.googleapis.com/imagenet-a/imagenet_a.zip
+    path: data/imagenet_a
+  imagenet_r:
+    url: https://github.com/hendrycks/imagenet-r
+    path: data/imagenet_r
+  imagenet_v2:
+    url: https://imagenetv2.org/
+    path: data/imagenet_v2
+models:
+  hssd_b:
+    params: 550000000
+    stages: 3
+    dim: 1536
+    layers: 24
+    adapter_ratio: 0.009
+  dit_xl_2:
+    params: 1600000000
+  diffu_ssm_b:
+    params: 600000000
+  u_dit_b:
+    params: 1100000000
+  faster_dit_b:
+    params: 900000000
+training:
+  batch_size: 2048
+  accumulation_steps: 2
+  base_lr: 0.0005
+  weight_decay: 0.05
+  ema_decay: 0.9999
+  max_pfops: 1200000000000000.0
+  target_fid: 3.0
+  eval_every: 20000
+  seeds:
+  - 11
+  - 29
+  - 42
+output:
+  root: results

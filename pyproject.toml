@@ -1,29 +1,24 @@
-[build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
-
 [project]
-name = "fcrd-one-step"
+name = "hssd-research"
 version = "0.1.0"
-description = "Refactored project for Frequency-Conditioned Residual Distillation (1-step diffusion)."
-readme = "README.md"
-requires-python = ">=3.10"
-license = {text = "MIT"}
+description = "Research codebase for Hierarchical Selective-State Diffusion (HSSD) experiments"
+requires-python = ">=3.10,<3.12"
+dynamic = ["dependencies"]
 
-# ------------------------- Dependencies ------------------------- #
-dependencies = [
-  "torch",
-  "torchvision",
-  "diffusers",
-  "torchmetrics",
-  "open_clip_torch",
-  "Pillow",
-  "pyyaml",
-  "requests",
-  "tqdm",
-  "matplotlib",
-  "pywavelets"
-]
+[project.optional-dependencies]
+# No extras for now
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.setuptools]
+# Root package is single-module namespace; src-layout is already implicit.
+
+[tool.setuptools.dynamic]
+dependencies = {literal = [
+    "torch >=2.2.0,<3.0.0",
+    "torchvision >=0.17.0",
+    "deepspeed ==0.17.0",
+    "flash-attn >=2.0.0,<3.0.0",
+    "xformers ==0.0.23",
+    "matplotlib >=3.8.0,<4.0.0",
+    "pyyaml >=6.0.0",
+    "mamba-ssm >=1.1.0",
+]}
