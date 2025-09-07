@@ -7,3 +7,58 @@ Downloading http://images.cocodataset.org/zips/train2014.zip → data/coco/train
 Extracting data/coco/train2014.zip → data/coco
 Downloading http://images.cocodataset.org/zips/val2014.zip → data/coco/val2014.zip
 Extracting data/coco/val2014.zip → data/coco
+=== uv sync start Sun Sep  7 06:30:02 PM UTC 2025 ===
+=== uv install end Sun Sep  7 06:30:06 PM UTC 2025 ===
+=== experiment start Sun Sep  7 06:30:06 PM UTC 2025 ===
+Step   1 | Loss 1.0571
+Step   2 | Loss 1.0571
+[Eval] step 2  FID-50k = 999.00 | wall = 0.00 h
+
+=== Experiment Summary (HSSD-B) ===
+{
+  "fid_curve": [
+    {
+      "step": 2,
+      "fid": 999.0,
+      "wall_h": 0.00015620536274380155
+    }
+  ]
+}
+Outputs written:
+  • JSON ....... .research/iteration4/seed11.json
+  • Figure ..... .research/iteration4/images/seed11_fid_curve.pdf
+Step   1 | Loss 1.0396
+Step   2 | Loss 1.0396
+[Eval] step 2  FID-50k = 999.00 | wall = 0.00 h
+
+=== Experiment Summary (HSSD-B) ===
+{
+  "fid_curve": [
+    {
+      "step": 2,
+      "fid": 999.0,
+      "wall_h": 3.703773021697998e-05
+    }
+  ]
+}
+Outputs written:
+  • JSON ....... .research/iteration4/seed29.json
+  • Figure ..... .research/iteration4/images/seed29_fid_curve.pdf
+Step   1 | Loss 1.0371
+Step   2 | Loss 1.0371
+[Eval] step 2  FID-50k = 999.00 | wall = 0.00 h
+
+=== Experiment Summary (HSSD-B) ===
+{
+  "fid_curve": [
+    {
+      "step": 2,
+      "fid": 999.0,
+      "wall_h": 3.7138726976182726e-05
+    }
+  ]
+}
+Outputs written:
+  • JSON ....... .research/iteration4/seed42.json
+  • Figure ..... .research/iteration4/images/seed42_fid_curve.pdf
+=== experiment end Sun Sep  7 06:30:31 PM UTC 2025 ===
