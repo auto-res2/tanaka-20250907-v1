@@ -3,22 +3,30 @@ name = "hssd-research"
 version = "0.1.0"
 description = "Research codebase for Hierarchical Selective-State Diffusion (HSSD) experiments"
 requires-python = ">=3.10,<3.12"
-dynamic = ["dependencies"]
+
+# -----------------------------------------------------------------------------
+#  Dependencies – keep the default install extremely light-weight so that CI
+#  environments do not need to compile GPU extensions like FlashAttention.
+#  Heavy libraries (DeepSpeed, flash-attn, etc.) can be installed manually when
+#  running the *real* experiments on appropriate hardware.
+# -----------------------------------------------------------------------------
+
+dependencies = [
+  "torch>=2.0.0",
+  "torchvision>=0.15.0",
+  "matplotlib>=3.8.0,<4.0.0",
+  "pyyaml>=6.0.0"
+]
 
 [project.optional-dependencies]
-# No extras for now
+# Full stack required for large-scale training – **install explicitly** when
+# needed:   pip install .[full]
+full = [
+  "deepspeed==0.17.0",
+  "flash-attn>=2.0.0,<3.0.0",
+  "xformers==0.0.23",
+  "mamba-ssm>=1.1.0"
+]
 
 [tool.setuptools]
-# Root package is single-module namespace; src-layout is already implicit.
-
-[tool.setuptools.dynamic]
-dependencies = {literal = [
-    "torch >=2.2.0,<3.0.0",
-    "torchvision >=0.17.0",
-    "deepspeed ==0.17.0",
-    "flash-attn >=2.0.0,<3.0.0",
-    "xformers ==0.0.23",
-    "matplotlib >=3.8.0,<4.0.0",
-    "pyyaml >=6.0.0",
-    "mamba-ssm >=1.1.0",
-]}
+package-dir = {"" = "src"}

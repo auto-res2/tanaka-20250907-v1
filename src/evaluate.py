@@ -3,16 +3,22 @@ evaluate.py
 -----------
 Utility helpers for saving experiment metrics and producing publication-quality
 plots.  All heavy numerical evaluation (e.g. FID computation) should live here
-once implemented.  For now we only have a JSON dump and a dummy curve plot so
-that the refactored script reproduces the exact behaviour of the monolithic
-version.
+once implemented.
+
+The specification for this iteration requires that *all* artefacts are written
+under:
+  • JSON files ..........  .research/iteration2/
+  • Figures (images) .....  .research/iteration2/images/
+
+Those directories are created on-the-fly.  Each experiment/seed combination
+gets its own pair of files so that multiple runs do not overwrite each other.
 """
 
 from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 import matplotlib
 
@@ -21,8 +27,19 @@ import matplotlib.pyplot as plt  # noqa: E402 (after Agg backend)
 
 __all__ = ["save_and_plot_results"]
 
+# -----------------------------------------------------------------------------
+#  Constants – centralised here to guarantee the correct on-disk layout
+# -----------------------------------------------------------------------------
 
-def _plot_fid_curve(results: Dict[str, Any], fig_path: Path):
+RESULTS_ROOT = Path(".research/iteration2")
+IMAGES_DIR = RESULTS_ROOT / "images"
+
+
+# -----------------------------------------------------------------------------
+#  Helpers
+# -----------------------------------------------------------------------------
+
+def _plot_fid_curve(results: Dict[str, Any], fig_path: Path):  # noqa: D401
     """Persist a simple FID-over-time figure (dummy values until real FID)."""
 
     if not results.get("fid_curve"):
@@ -44,24 +61,34 @@ def _plot_fid_curve(results: Dict[str, Any], fig_path: Path):
     plt.close()
 
 
-def save_and_plot_results(results: Dict[str, Any], out_dir: Path, local_rank: int):
-    """Dump results to JSON and produce a PDF plot.  All printing happens only
-    on rank-0 to avoid duplicated stdout in distributed jobs."""
+# -----------------------------------------------------------------------------
+#  Public API
+# -----------------------------------------------------------------------------
 
-    out_dir.mkdir(parents=True, exist_ok=True)
+def save_and_plot_results(results: Dict[str, Any], out_dir: Path, local_rank: int):
+    """Dump results to JSON and produce a PDF plot.
+
+    The *out_dir* argument is used only for naming (so that callers do not need
+    to know the global folder structure enforced by this helper).
+    """
+
+    RESULTS_ROOT.mkdir(parents=True, exist_ok=True)
+    IMAGES_DIR.mkdir(parents=True, exist_ok=True)
 
     # 1) JSON dump --------------------------------------------------------
-    json_path = out_dir / "exp1_cost_quality.json"
+    json_path = RESULTS_ROOT / f"{out_dir.name}.json"
     with open(json_path, "w", encoding="utf-8") as fp:
         json.dump(results, fp, indent=2)
 
     # 2) Plot -------------------------------------------------------------
-    fig_path = out_dir / "training_fid_curve_hssd.pdf"
+    fig_path = IMAGES_DIR / f"{out_dir.name}_fid_curve.pdf"
     _plot_fid_curve(results, fig_path)
 
     # 3) Console summary --------------------------------------------------
     if local_rank == 0:
-        print("\n=== Experiment 1 – Cost-for-Quality Benchmark (HSSD-B) ===")
+        print("\n=== Experiment Summary (HSSD-B) ===")
         print(json.dumps(results, indent=2))
+        print("Outputs written:")
+        print(f"  • JSON ....... {json_path}")
         if fig_path.exists():
-            print(f"Figures produced: {fig_path.name}")
+            print(f"  • Figure ..... {fig_path}")
