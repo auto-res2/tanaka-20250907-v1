@@ -1,0 +1,25 @@
+# config/config.yaml – collection of experiments. Add / edit as needed.
+experiments:
+  - experiment:
+      name: exp1_large_scale_benchmark
+    seed: 42
+    trainer:
+      experiment_name: exp1_large_scale_benchmark
+      lr: 3e-4
+      max_steps: 10000  # shortened for quicker smoke test
+      checkpoint_every: 2000
+    model:
+      module: src.train
+      class: FCRD1Step
+      kwargs:
+        hidden_size: 192
+        mixer_depth: 4
+    data_module:
+      module: src.preprocess
+      class: COCODataModule
+      kwargs:
+        root: ./data/coco
+        batch_size: 16
+        num_workers: 8
+    evaluation:
+      metrics: [FID, IS, CLIP, HFE]

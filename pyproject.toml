@@ -1,1 +1,28 @@
-# Please list the required python packages.
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fcrd-one-step"
+version = "0.1.0"
+description = "Refactored project for Frequency-Conditioned Residual Distillation (1-step diffusion)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+
+# ------------------------- Dependencies ------------------------- #
+[project.dependencies]
+torch = "*"
+torchvision = "*"
+diffusers = "*"
+torchmetrics = "*"
+open_clip_torch = "*"
+Pillow = "*"
+pyyaml = "*"
+requests = "*"
+tqdm = "*"
+matplotlib = "*"
+pywavelets = "*"
+
+[tool.setuptools.packages.find]
+where = ["src"]
