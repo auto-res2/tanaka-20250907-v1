@@ -638,6 +638,68 @@
       }
     }
   ],
+  "reference_research_study_list": [
+    {
+      "title": "TRACT: denoising diffusion models with transitive closure time-distillation"
+    },
+    {
+      "title": "JAX: composable transformations of Python+NumPy programs"
+    },
+    {
+      "title": "Imagenet: A large-scale hierarchical image database"
+    },
+    {
+      "title": "Which moments to match?"
+    },
+    {
+      "title": "Generative adversarial networks"
+    },
+    {
+      "title": "Large sample properties of generalized method of moments estimators"
+    },
+    {
+      "title": "Multistep consistency models"
+    },
+    {
+      "title": "Gans trained by a two time-scale update rule converge to a local nash equilibrium"
+    },
+    {
+      "title": "Classifier-free diffusion guidance"
+    },
+    {
+      "title": "Denoising diffusion probabilistic models"
+    },
+    {
+      "title": "simple diffusion: End-to-end diffusion for high resolution images"
+    },
+    {
+      "title": "Scalable adaptive computation for iterative generation"
+    },
+    {
+      "title": "Elucidating the design space of diffusion-based generative models"
+    },
+    {
+      "title": "Consistency trajectory models: Learning probability flow ODE trajectory of diffusion"
+    },
+    {
+      "title": "Adam: A method for stochastic optimization"
+    },
+    {
+      "title": "Understanding the diffusion objective as a weighted integral of elbos"
+    },
+    {
+      "title": "Variational diffusion models"
+    },
+    {
+      "title": "Microsoft COCO: common objects in context"
+    },
+    {
+      "title": "Instaflow: One step is enough for high-quality diffusion-based text-to-image generation"
+    },
+    {
+      "title": "Power hungry processing: Watts driving the cost of ai deployment?"
+    }
+  ],
   "new_method": {
     "method": "Open Problems: Fast‐training of high–resolution diffusion models is still prohibitively costly. Even the most efficient published architectures (DiT, U-DiT, DIFFU-SSM, FasterDiT) require days of training on tens to hundreds of high–end GPUs because (1) quadratic-cost self-attention or very long sequences dominate FLOPs, (2) every noise–level shares the same heavy backbone although denoising difficulty varies across timesteps, and (3) existing acceleration tricks (Immiscible Diffusion, multi-stage decoders, caching, etc.) are add-ons rather than being co-designed with the backbone. A solution that fundamentally changes the backbone so that it learns with linear complexity while still delivering ImageNet-level quality would have immediate impact on cost, carbon footprint and accessibility of diffusion research.\nMethods: We propose Hierarchical Selective-State Diffusion (HSSD), a new backbone family that combines recent selective-state space sequence models (e.g., Mamba/SS2) with multi-resolution patching tailored for diffusion.\n1.  Linear-Time Spatial SSM Core – replace every self-attention layer with a 2-D version of the selective SSM (select-gate + bidirectional convolutional SSM) implemented with FFT kernels, giving O(L log L) instead of O(L^2).\n2.  Hierarchical Patch Cascade – input latents are processed at three spatial scales (32²,16²,8² tokens).  Each stage reuses the same SSM block weights through parameter sharing and low-rank adapters, inspired by recurrent usage across timesteps; this reduces parameters and allows mixed-precision weight reuse in memory.\n3.  Stage-Aware Adapter Bank – instead of a full multi-decoder U-Net, we attach tiny adapter MLPs (<<1 % parameters) that are active only for their assigned timestep cluster (using the optimal denoiser clustering algorithm).  Thus late-noise steps use cheaper adapters.\n4.  Frequency-conditioned Input – following Wavelet Diffusion, only the LL band passes through all stages; HH/LH/HL bands are injected at the final stage, so early training sees ¼ of the pixels.\n5.  Convergence Booster – integrate Immiscible Diffusion’s noise-assignment and curriculum noise scheduling.  Together with our lighter core, the model reaches good likelihood in ≈20 % of the steps of vanilla DiT.\n6.  Training recipe – start from scratch (no teacher) but optionally add self-distillation from an EMA of the network every 10 K steps to stabilise the smaller model.\nExperimental Setup: •  Datasets: ImageNet-1K at 256×256 and 512×512; additionally LAION-Aesthetics 512 for open-domain validation.\n•  Baselines: DiT-XL/2, U-DiT-B, DIFFU-SSM (same hidden size), FasterDiT (with its training tricks).\n•  Hardware budget: 8 × A100-80 GB vs published 256-TPUv5e / 32-A100 baselines.\n•  Metrics: (1) Quality – FID-50K, sFID, IS, CLIP-Score. (2) Training efficiency – wall-clock time to reach FID=3.0 (256²), total PFLOPs, energy. (3) Memory footprint during training (peak GPU RAM). (4) Ablations: remove frequency path, remove adapters, replace SSM with attention, disable Immiscible.\n•  Robustness: evaluate under extremal few-step samplers (4,8,16) with DPM-Solver++, and under class-conditional & unconditional settings.\n•  Code release with JAX & PyTorch kernels for the 2-D selective SSM.\nExpected Result: HSSD-B (≈550 M params) is expected to achieve FID-50K 2.9 on ImageNet-256 with 400 K iterations (≈1.5 days on 8 A100) – a 4× reduction in PFLOPs and 7× faster wall-clock than DiT-XL/2 for identical quality.  Memory peak drops from 46 GB to 22 GB.  On ImageNet-512 it matches U-DiT-L FID 4.5 with half the compute.  Ablations should show: +0.4 FID without frequency path; +0.6 FID and +30 % FLOPs without adapters; +1.2 FID and 2× FLOPs when reverting to attention.  Few-step sampling (8 steps) attains FID 6.1, outperforming FasterDiT distilled variant by 0.5 FID at same steps.\nExpected Conclusion: The proposed Hierarchical Selective-State Diffusion architecture demonstrates that linear-time SSMs coupled with frequency-aware hierarchical design can slash training cost of high-fidelity diffusion models without sacrificing quality.  This paves the way for commodity-GPU training, greener research, and rapid iteration.  Future work can extend HSSD to video (leveraging Mamba-3D kernels) and to resource-constrained on-device training (with TDQ quantisation).",
     "experimental_design": {
