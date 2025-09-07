@@ -9,8 +9,8 @@ once implemented.
 
 The specification for this iteration requires that *all* artefacts are written
 under:
-  • JSON files ..........  .research/iteration3/
-  • Figures (images) .....  .research/iteration3/images/
+  • JSON files ..........  .research/iteration4/
+  • Figures (images) .....  .research/iteration4/images/
 
 Those directories are created on-the-fly.  Each experiment/seed combination
 gets its own pair of files so that multiple runs do not overwrite each other.
@@ -31,7 +31,7 @@ __all__ = ["save_and_plot_results"]
 #  Constants – centralised here to guarantee the correct on-disk layout
 # -----------------------------------------------------------------------------
 
-RESULTS_ROOT = Path(".research/iteration3")
+RESULTS_ROOT = Path(".research/iteration4")
 IMAGES_DIR = RESULTS_ROOT / "images"
 
 
@@ -87,6 +87,7 @@ def save_and_plot_results(results: Dict[str, Any], out_dir: Path, local_rank: in
     # 3) Console summary --------------------------------------------------
     if local_rank == 0:
         print("\n=== Experiment Summary (HSSD-B) ===")
+        # Print the *exact* JSON we just wrote for verification
         print(json.dumps(results, indent=2))
         print("Outputs written:")
         print(f"  • JSON ....... {json_path}")
