@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 evaluate.py
 -----------
@@ -7,14 +9,12 @@ once implemented.
 
 The specification for this iteration requires that *all* artefacts are written
 under:
-  • JSON files ..........  .research/iteration2/
-  • Figures (images) .....  .research/iteration2/images/
+  • JSON files ..........  .research/iteration3/
+  • Figures (images) .....  .research/iteration3/images/
 
 Those directories are created on-the-fly.  Each experiment/seed combination
 gets its own pair of files so that multiple runs do not overwrite each other.
 """
-
-from __future__ import annotations
 
 import json
 from pathlib import Path
@@ -31,7 +31,7 @@ __all__ = ["save_and_plot_results"]
 #  Constants – centralised here to guarantee the correct on-disk layout
 # -----------------------------------------------------------------------------
 
-RESULTS_ROOT = Path(".research/iteration2")
+RESULTS_ROOT = Path(".research/iteration3")
 IMAGES_DIR = RESULTS_ROOT / "images"
 
 

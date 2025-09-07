@@ -12,6 +12,7 @@ requires-python = ">=3.10,<3.12"
 # -----------------------------------------------------------------------------
 
 dependencies = [
+  "numpy<2.0.0",  # ensure ABI compatibility with current PyTorch wheels
   "torch>=2.0.0",
   "torchvision>=0.15.0",
   "matplotlib>=3.8.0,<4.0.0",
