@@ -1,6 +1,3 @@
-"""src/evaluate.py
-Metric computation, plotting & full evaluation loop.
-"""
 from __future__ import annotations
 
 import time
@@ -110,6 +107,6 @@ def run_full_evaluation(
     hfe = metric.high_freq_error(imgs, gen)
 
     result = {"FID": fid, "IS": iscore, "CLIPScore": clip_score, "HFE": hfe}
-    fig_dir = project_root / ".research" / "iteration1" / "images"
+    fig_dir = project_root / ".research" / "iteration2" / "images"
     fig_path = _plot_dummy_curve(metric.fid, fig_dir)
     return result, [fig_path]

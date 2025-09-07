@@ -1,7 +1,3 @@
-"""src/main.py
-Entry-point: orchestrates reading config, launching experiments, persisting JSON & images.
-Run via `python -m src.main`.
-"""
 from __future__ import annotations
 
 import json
@@ -16,7 +12,7 @@ from .train import pretty_print_json, run_experiment
 # --------------------------------------------------------------------- #
 ROOT = Path(__file__).resolve().parent.parent  # project root (one above src/)
 CONFIG_PATH = ROOT / "config" / "config.yaml"
-RESULT_DIR = ROOT / ".research" / "iteration1"
+RESULT_DIR = ROOT / ".research" / "iteration2"
 RESULT_DIR.mkdir(parents=True, exist_ok=True)
 
 # --------------------------------------------------------------------- #
@@ -48,13 +44,13 @@ def main():
         res = run_experiment(cfg, ROOT)
         all_results[exp_name] = res
 
-        # Persist per-experiment JSON under .research/iteration1
+        # Persist per-experiment JSON under .research/iteration2
         out_json = RESULT_DIR / f"{exp_name}.json"
         with open(out_json, "w") as fp:
             json.dump(res, fp, indent=2)
         pretty_print_json(res)
 
-    print("\nAll experiments finished. JSON result files saved under .research/iteration1/\n")
+    print("\nAll experiments finished. JSON result files saved under .research/iteration2/\n")
 
 
 if __name__ == "__main__":

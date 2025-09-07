@@ -11,18 +11,19 @@ requires-python = ">=3.10"
 license = {text = "MIT"}
 
 # ------------------------- Dependencies ------------------------- #
-[project.dependencies]
-torch = "*"
-torchvision = "*"
-diffusers = "*"
-torchmetrics = "*"
-open_clip_torch = "*"
-Pillow = "*"
-pyyaml = "*"
-requests = "*"
-tqdm = "*"
-matplotlib = "*"
-pywavelets = "*"
+dependencies = [
+  "torch",
+  "torchvision",
+  "diffusers",
+  "torchmetrics",
+  "open_clip_torch",
+  "Pillow",
+  "pyyaml",
+  "requests",
+  "tqdm",
+  "matplotlib",
+  "pywavelets"
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
