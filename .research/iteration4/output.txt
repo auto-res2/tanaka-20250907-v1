@@ -1,0 +1,9 @@
+=== uv sync start Sun Sep  7 01:39:19 PM UTC 2025 ===
+=== uv install end Sun Sep  7 01:39:24 PM UTC 2025 ===
+=== experiment start Sun Sep  7 01:39:24 PM UTC 2025 ===
+Downloading http://images.cocodataset.org/annotations/annotations_trainval2014.zip → data/coco/annotations.zip
+Extracting data/coco/annotations.zip → data/coco
+Downloading http://images.cocodataset.org/zips/train2014.zip → data/coco/train2014.zip
+Extracting data/coco/train2014.zip → data/coco
+Downloading http://images.cocodataset.org/zips/val2014.zip → data/coco/val2014.zip
+Extracting data/coco/val2014.zip → data/coco
